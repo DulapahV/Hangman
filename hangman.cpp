@@ -16,6 +16,9 @@ fstream &ReadLine(fstream& file, unsigned int num); // read a specific line in w
 int GetRandInt();
 string GetWord(unsigned int num); // get a random word from word.txt
 int HangMan(int num); // print out a Hangman
+string DisplayCorrect(string ref, string hidden, char show); // print out "_" and/or corrected guess
+char GetUsin(); // get user input
+bool CheckUsin(string ref, char letter); // check whether user's guess is correct
 
 
 // main driver
@@ -31,14 +34,38 @@ int main() {
     cout << "Choosen word is " << word << endl; // DEBUG
     
     int life = 10; // player's life
-    HangMan(life);
+    HangMan(life);   
     cout << "Remaining Life: " << life << endl << endl;
 
     for (int i = 0; i < wordLength; i++) { // print "_"
         cout << guess[i] << " ";
     }
+    cout << endl << endl;
+    //cout << string(2, '\n'); // DEBUG
 
-    
+    while (life > 0) {
+        if (CheckUsin(word, GetUsin())) { // check if correct
+            cout << "YES" << endl;
+            HangMan(life);
+            cout << "Remaining Life: " << life << endl << endl;
+
+            for (int i = 0; i < wordLength; i++) { // print "_"
+                cout << guess[i] << " ";
+            }
+            cout << endl << endl;
+        }
+        else {
+            life--;
+            HangMan(life);
+            cout << "Remaining Life: " << life << endl << endl;
+
+            for (int i = 0; i < wordLength; i++) { // print "_"
+                cout << guess[i] << " ";
+            }
+            cout << endl << endl;
+        }
+    }
+    cout << "You loose :(" << endl;
     return 0;
 }
 
@@ -173,4 +200,33 @@ int HangMan(int num) {
             break;
     }
     return 0;
+}
+
+string DisplayCorrect(string ref, string hidden, char show) {
+    
+}
+
+char GetUsin() {
+    char usin;
+    while (true)
+    {
+        cout << "Guess a character: "; // prompt user for a character
+        char temp;
+        cin >> temp;
+        usin = tolower(temp);
+        if (usin >= 'a' && usin <= 'z') { // check if user enter a character
+            break;
+        }
+    }
+    cout << endl << endl;
+    return usin;
+}
+
+bool CheckUsin(string ref, char letter) {
+    for (int i = 0; i < ref.size(); i++) {
+        if (letter == ref[i]) {
+            return true;
+        }
+    }
+    return false;
 }
