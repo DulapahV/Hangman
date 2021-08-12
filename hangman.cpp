@@ -1,5 +1,5 @@
 // Written by Dulapah Vibulsanti (64011388)
-// Hangman Project
+// Hidden Hangman Project
 // See README.txt for more information.
 
 #include <iostream>
@@ -26,9 +26,9 @@ int main() {
     string word = GetWord(GetRandInt()); // Get a word
     int wordLength = word.length(); // Get word length
 
-    vector<string> guess; // Create a "_" to show user
+    string guess; // Create a "_" to show user
     for (int i = 0; i < wordLength; i++) {
-        guess.push_back("_");
+        guess[i] = '_';
     }
 
     cout << "Choosen word is " << word << endl; // DEBUG
@@ -43,15 +43,37 @@ int main() {
     cout << endl << endl;
     //cout << string(2, '\n'); // DEBUG
 
+    vector<char> repeat;
     while (life > 0) {
-        if (CheckUsin(word, GetUsin())) { // check if correct
-            cout << "YES" << endl;
-            HangMan(life);
-            cout << "Remaining Life: " << life << endl << endl;
-
-            for (int i = 0; i < wordLength; i++) { // print "_"
-                cout << guess[i] << " ";
+        char temp =  GetUsin();
+        string display = DisplayCorrect(word, guess, temp);
+        cout << "Remaining Life: " << life << endl << endl;
+        if (CheckUsin(word, temp)) { // check if correct
+            
+            bool enableDsp = true; 
+            for (int i = 0; i < repeat.size(); i++) {
+                if (temp == repeat[i]) {
+                    life--;
+                    HangMan(life);
+                    cout << "Remaining Life: " << life << endl << endl;
+                    enableDsp = false;
+                    break;
+                }
             }
+            repeat.push_back(temp);
+            HangMan(life);
+            
+            if (enableDsp) {
+                for (int i = 0; i < wordLength; i++) { // print "_"
+                    cout << display[i] << " ";
+                }
+            }
+            else {
+                for (int i = 0; i < wordLength; i++) { // print "_"
+                    cout << guess[i] << " ";
+                }
+            }
+            
             cout << endl << endl;
         }
         else {
@@ -60,7 +82,7 @@ int main() {
             cout << "Remaining Life: " << life << endl << endl;
 
             for (int i = 0; i < wordLength; i++) { // print "_"
-                cout << guess[i] << " ";
+                cout << display[i] << " ";
             }
             cout << endl << endl;
         }
@@ -203,7 +225,15 @@ int HangMan(int num) {
 }
 
 string DisplayCorrect(string ref, string hidden, char show) {
-    
+    for (int i = 0; i < ref.length(); i++) {
+        if (show == ref[i]) {
+            hidden[i] = ref[i];
+        }
+        else {
+            hidden[i] = '_';
+        }
+    }
+    return hidden;
 }
 
 char GetUsin() {
