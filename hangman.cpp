@@ -9,6 +9,7 @@
 #include <random>
 #include <time.h>
 
+
 using namespace std;
 
 // function prototype
@@ -42,56 +43,68 @@ int main() {
     }
     cout << endl << endl;
     //cout << string(2, '\n'); // DEBUG
-
     vector<char> repeat;
+    int guessedAll = wordLength - 1;
     while (life > 0) {
         char temp =  GetUsin();
         string display = DisplayCorrect(word, guess, temp);
-        cout << "Remaining Life: " << life << endl << endl;
         if (CheckUsin(word, temp)) { // check if correct
-            
             bool enableDsp = true; 
             for (int i = 0; i < repeat.size(); i++) {
                 if (temp == repeat[i]) {
                     life--;
-                    HangMan(life);
-                    cout << "Remaining Life: " << life << endl << endl;
+                    cout << "Repeated guess!" << endl;
                     enableDsp = false;
                     break;
                 }
             }
             repeat.push_back(temp);
             HangMan(life);
+            cout << "Remaining Life: " << life << endl << endl;
             
             if (enableDsp) {
-                for (int i = 0; i < wordLength; i++) { // print "_"
+                for (int i = 0; i < wordLength; i++) { // print "_" and correc letter
                     cout << display[i] << " ";
+                    
                 }
+                guessedAll--;
             }
             else {
                 for (int i = 0; i < wordLength; i++) { // print "_"
                     cout << guess[i] << " ";
                 }
             }
-            
             cout << endl << endl;
         }
         else {
             life--;
+            if (life != 0) {
+                cout << "Incorrect guess!" << endl;
+            }
+            else {
+                cout << "Game over!" << endl;
+            }
             HangMan(life);
-            cout << "Remaining Life: " << life << endl << endl;
-
-            for (int i = 0; i < wordLength; i++) { // print "_"
-                cout << display[i] << " ";
+            cout << "Remaining Life: " << life << endl;
+            
+            if (life != 0) {
+                cout << endl;
+                for (int i = 0; i < wordLength; i++) { // print "_"
+                    cout << display[i] << " ";
+                }
+            }
+            else {
+                cout << "\nCorrect word is " << word;
             }
             cout << endl << endl;
         }
     }
     cout << "You loose :(" << endl;
+    system("pause");
     return 0;
 }
 
-// function
+// functionh
 fstream &ReadLine(fstream& file, unsigned int num) {
     file.seekg(ios::beg);
     for (int i = 0; i < num - 1; i++) {
@@ -127,7 +140,7 @@ string GetWord(unsigned int num) {
     return word;
 }
 
-// hangman ASCII art provided by https://gist.github.com/chrishorton/8510732aa9a80a03c829b09f12e20d9c
+// hangman ASCII art edited from https://gist.github.com/chrishorton/8510732aa9a80a03c829b09f12e20d9c
 int HangMan(int num) {
     switch (num) {
         case 10:
@@ -137,19 +150,19 @@ int HangMan(int num) {
             cout << "       " << endl;
             cout << "       " << endl;
             cout << "       " << endl;
-            cout << "=========" << endl;
+            cout << "         " << endl;
             break;
         case 9:
             cout << "       " << endl;
-            cout << "      |" << endl;
-            cout << "      |" << endl;
-            cout << "      |" << endl;
-            cout << "      |" << endl;
-            cout << "      |" << endl;
+            cout << "       " << endl;
+            cout << "       " << endl;
+            cout << "       " << endl;
+            cout << "       " << endl;
+            cout << "       " << endl;
             cout << "=========" << endl;
             break;
         case 8:
-            cout << "  +---+" << endl;
+            cout << "       " << endl;
             cout << "      |" << endl;
             cout << "      |" << endl;
             cout << "      |" << endl;
@@ -159,7 +172,7 @@ int HangMan(int num) {
             break;
         case 7:
             cout << "  +---+" << endl;
-            cout << "  |   |" << endl;
+            cout << "      |" << endl;
             cout << "      |" << endl;
             cout << "      |" << endl;
             cout << "      |" << endl;
@@ -169,7 +182,7 @@ int HangMan(int num) {
         case 6:
             cout << "  +---+" << endl;
             cout << "  |   |" << endl;
-            cout << "  O   |" << endl;
+            cout << "      |" << endl;
             cout << "      |" << endl;
             cout << "      |" << endl;
             cout << "      |" << endl;
@@ -179,7 +192,7 @@ int HangMan(int num) {
             cout << "  +---+" << endl;
             cout << "  |   |" << endl;
             cout << "  O   |" << endl;
-            cout << "  |   |" << endl;
+            cout << "      |" << endl;
             cout << "      |" << endl;
             cout << "      |" << endl;
             cout << "=========" << endl;
@@ -188,7 +201,7 @@ int HangMan(int num) {
             cout << "  +---+" << endl;
             cout << "  |   |" << endl;
             cout << "  O   |" << endl;
-            cout << " /|   |" << endl;
+            cout << "  |   |" << endl;
             cout << "      |" << endl;
             cout << "      |" << endl;
             cout << "=========" << endl;
@@ -197,7 +210,7 @@ int HangMan(int num) {
             cout << "  +---+" << endl;
             cout << "  |   |" << endl;
             cout << "  O   |" << endl;
-            cout << " /|\\  |" << endl;
+            cout << " /|   |" << endl;
             cout << "      |" << endl;
             cout << "      |" << endl;
             cout << "=========" << endl;
@@ -207,11 +220,20 @@ int HangMan(int num) {
             cout << "  |   |" << endl;
             cout << "  O   |" << endl;
             cout << " /|\\  |" << endl;
-            cout << " /    |" << endl;
+            cout << "      |" << endl;
             cout << "      |" << endl;
             cout << "=========" << endl;
             break;
         case 1:
+            cout << "  +---+" << endl;
+            cout << "  |   |" << endl;
+            cout << "  O   |" << endl;
+            cout << " /|\\  |" << endl;
+            cout << " /    |" << endl;
+            cout << "      |" << endl;
+            cout << "=========" << endl;
+            break;
+        case 0:
             cout << "  +---+" << endl;
             cout << "  |   |" << endl;
             cout << "  O   |" << endl;
@@ -229,7 +251,7 @@ string DisplayCorrect(string ref, string hidden, char show) {
         if (show == ref[i]) {
             hidden[i] = ref[i];
         }
-        else {
+        else if (hidden[i] != '_'){
             hidden[i] = '_';
         }
     }
@@ -248,7 +270,7 @@ char GetUsin() {
             break;
         }
     }
-    cout << endl << endl;
+    system("cls");
     return usin;
 }
 
