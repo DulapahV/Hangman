@@ -8,6 +8,7 @@
 #include <fstream>
 #include <random>
 #include <time.h>
+#include <string>
 
 
 using namespace std;
@@ -43,68 +44,92 @@ int main() {
     }
     cout << endl << endl;
     //cout << string(2, '\n'); // DEBUG
+
+    vector<char> wordNoRepeat(word.begin(), word.end());
+    sort(wordNoRepeat.begin(), wordNoRepeat.end());
+    wordNoRepeat.erase(unique(wordNoRepeat.begin(), wordNoRepeat.end()), wordNoRepeat.end());
+
     vector<char> repeat;
-    int guessedAll = wordLength - 1;
-    while (life > 0) {
-        char temp =  GetUsin();
-        string display = DisplayCorrect(word, guess, temp);
-        if (CheckUsin(word, temp)) { // check if correct
-            bool enableDsp = true; 
-            for (int i = 0; i < repeat.size(); i++) {
-                if (temp == repeat[i]) {
-                    life--;
-                    cout << "Repeated guess!" << endl;
-                    enableDsp = false;
-                    break;
+    int guessedAll = wordNoRepeat.size();
+    while (life > 0 ) {
+        if (guessedAll != 0) {
+            char temp =  GetUsin();
+            string display = DisplayCorrect(word, guess, temp);
+            if (CheckUsin(word, temp)) { // check if correct
+                bool enableDsp = true; 
+                for (int i = 0; i < repeat.size(); i++) {
+                    if (temp == repeat[i]) {
+                        life--;
+                        cout << "Repeated guess!" << endl;
+                        enableDsp = false;
+                        break;
+                    }
                 }
-            }
-            repeat.push_back(temp);
-            HangMan(life);
-            cout << "Remaining Life: " << life << endl << endl;
-            
-            if (enableDsp) {
-                for (int i = 0; i < wordLength; i++) { // print "_" and correc letter
-                    cout << display[i] << " ";
-                    
+                repeat.push_back(temp);
+                HangMan(life);
+                cout << "Remaining Life: " << life << endl << endl;
+                
+                if (enableDsp) {
+                    for (int i = 0; i < wordLength; i++) { // print "_" and correct letter
+                        cout << display[i] << " ";
+                        
+                    }
+                    guessedAll--;
                 }
-                guessedAll--;
+                else {
+                    for (int i = 0; i < wordLength; i++) { // print "_"
+                        cout << guess[i] << " ";
+                    }
+                }
+                cout << endl << endl;
             }
             else {
-                for (int i = 0; i < wordLength; i++) { // print "_"
-                    cout << guess[i] << " ";
+                life--;
+                if (life != 0) {
+                    cout << "Incorrect guess!" << endl;
                 }
+                else {
+                    cout << "Game over!" << endl;
+                }
+                HangMan(life);
+                cout << "Remaining Life: " << life << endl;
+                
+                if (life != 0) {
+                    cout << endl;
+                    for (int i = 0; i < wordLength; i++) { // print "_"
+                        cout << display[i] << " ";
+                    }
+                }
+                else {
+                    //cout << "\nCorrect word is ";
+                    cout << endl;
+                    for (int i = 0; i < wordLength; i++) {
+                        cout << word[i] << " ";
+                    }
+                }
+                cout << endl << endl;
             }
-            cout << endl << endl;
         }
         else {
-            life--;
-            if (life != 0) {
-                cout << "Incorrect guess!" << endl;
-            }
-            else {
-                cout << "Game over!" << endl;
-            }
+            system("cls");
             HangMan(life);
-            cout << "Remaining Life: " << life << endl;
-            
-            if (life != 0) {
-                cout << endl;
-                for (int i = 0; i < wordLength; i++) { // print "_"
-                    cout << display[i] << " ";
-                }
-            }
-            else {
-                cout << "\nCorrect word is " << word;
+            cout << "Remaining Life: " << life << endl << endl;
+            for (int i = 0; i < wordLength; i++) {
+                cout << word[i] << " ";
             }
             cout << endl << endl;
+            cout << "You win!" << endl;
+            system("pause");
+            return 0;
         }
+
     }
     cout << "You loose :(" << endl;
     system("pause");
     return 0;
 }
 
-// functionh
+// function
 fstream &ReadLine(fstream& file, unsigned int num) {
     file.seekg(ios::beg);
     for (int i = 0; i < num - 1; i++) {
