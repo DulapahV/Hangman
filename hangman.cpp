@@ -10,101 +10,95 @@
 #include <time.h>
 #include <string>
 
-
 using namespace std;
 
 // function prototype
-fstream &ReadLine(fstream& file, unsigned int num); // read a specific line in word.txt and return the text in that line
-int GetRandInt();
 string GetWord(unsigned int num); // get a random word from word.txt
-int HangMan(int num); // print out a Hangman
+
 string DisplayCorrect(string ref, string hidden, char show); // print out "_" and/or corrected guess
+
+fstream &ReadLine(fstream& file, unsigned int num); // read a specific line in word.txt and return the text in that line
+
+int GetRandInt(); // generate a random integer
+
+void HangMan(int num); // print out a Hangman
+
 char GetUsin(); // get user input
+
 bool CheckUsin(string ref, char letter); // check whether user's guess is correct
 
+int life = 10; // player's life (max = 10)
 
-// main driver
+// main driver code
 int main() {
-    string word = GetWord(GetRandInt()); // Get a word
-    int wordLength = word.length(); // Get word length
+    string generatedWord = GetWord(GetRandInt()); // Get a word
+    int generatedWordLength = generatedWord.length();
 
-    string guess; // Create a "_" to show user
-    for (int i = 0; i < wordLength; i++) {
-        guess[i] = '_';
-    }
+    cout << "Choosen word is " << generatedWord << endl; // DEBUG
 
-    cout << "Choosen word is " << word << endl; // DEBUG
-    
-    int life = 10; // player's life
     HangMan(life);   
     cout << "Remaining Life: " << life << endl << endl;
 
-    for (int i = 0; i < wordLength; i++) { // print "_"
-        cout << guess[i] << " ";
+    string allDashed; // Create a "_" to show user
+    for (int i = 0; i < generatedWordLength; i++) {
+        allDashed[i] = '_';
+        cout << allDashed[i] << " ";
     }
     cout << endl << endl;
-    //cout << string(2, '\n'); // DEBUG
 
-    vector<char> wordNoRepeat(word.begin(), word.end());
-    sort(wordNoRepeat.begin(), wordNoRepeat.end());
-    wordNoRepeat.erase(unique(wordNoRepeat.begin(), wordNoRepeat.end()), wordNoRepeat.end());
+    // store all unique alphabet from generatedWord into a vector 
+    vector<char> uniqueKey(generatedWord.begin(), generatedWord.end());
+    sort(uniqueKey.begin(), uniqueKey.end());
+    uniqueKey.erase(unique(uniqueKey.begin(), uniqueKey.end()), uniqueKey.end());
+    int charLeft = uniqueKey.size(); // store number of characters not yet guessed
 
     vector<char> repeat;
-    int guessedAll = wordNoRepeat.size();
     while (life > 0 ) {
-        if (guessedAll != 0) {
-            char temp =  GetUsin();
-            string display = DisplayCorrect(word, guess, temp);
-            if (CheckUsin(word, temp)) { // check if correct
-                bool enableDsp = true; 
-                for (int i = 0; i < repeat.size(); i++) {
-                    if (temp == repeat[i]) {
+        if (charLeft != 0) { // check whether there are characters not yet guessed
+            char usin =  GetUsin();
+            string display = DisplayCorrect(generatedWord, allDashed, usin);
+            if (CheckUsin(generatedWord, usin)) { // check whether user's guess is correct
+                bool enableDsp = true; // enable/disable display of correct guess
+                for (int i = 0; i < repeat.size(); i++) { // Check whether user's guess is repeated
+                    if (usin == repeat[i]) {
                         life--;
                         cout << "Repeated guess!" << endl;
                         enableDsp = false;
                         break;
                     }
                 }
-                repeat.push_back(temp);
+                repeat.push_back(usin);
                 HangMan(life);
                 cout << "Remaining Life: " << life << endl << endl;
-                
                 if (enableDsp) {
-                    for (int i = 0; i < wordLength; i++) { // print "_" and correct letter
-                        cout << display[i] << " ";
-                        
+                    for (int i = 0; i < generatedWordLength; i++) { // print "_" and correct letter
+                        cout << display[i] << " "; 
                     }
-                    guessedAll--;
+                    charLeft--;
                 }
                 else {
-                    for (int i = 0; i < wordLength; i++) { // print "_"
-                        cout << guess[i] << " ";
+                    for (int i = 0; i < generatedWordLength; i++) { // print "_"
+                        cout << allDashed[i] << " ";
                     }
                 }
                 cout << endl << endl;
             }
             else {
                 life--;
-                if (life != 0) {
+                if (life != 0) { // check whether life != 0
                     cout << "Incorrect guess!" << endl;
-                }
-                else {
-                    cout << "Game over!" << endl;
-                }
-                HangMan(life);
-                cout << "Remaining Life: " << life << endl;
-                
-                if (life != 0) {
-                    cout << endl;
-                    for (int i = 0; i < wordLength; i++) { // print "_"
+                    HangMan(life);
+                    cout << "Remaining Life: " << life << endl << endl;
+                    for (int i = 0; i < generatedWordLength; i++) { // print "_"
                         cout << display[i] << " ";
                     }
                 }
                 else {
-                    //cout << "\nCorrect word is ";
-                    cout << endl;
-                    for (int i = 0; i < wordLength; i++) {
-                        cout << word[i] << " ";
+                    cout << "Game over!" << endl;
+                    HangMan(life);
+                    cout << "Remaining Life: " << life << endl << endl;
+                    for (int i = 0; i < generatedWordLength; i++) {
+                        cout << generatedWord[i] << " ";
                     }
                 }
                 cout << endl << endl;
@@ -114,8 +108,8 @@ int main() {
             system("cls");
             HangMan(life);
             cout << "Remaining Life: " << life << endl << endl;
-            for (int i = 0; i < wordLength; i++) {
-                cout << word[i] << " ";
+            for (int i = 0; i < generatedWordLength; i++) {
+                cout << generatedWord[i] << " ";
             }
             cout << endl << endl;
             cout << "You win!" << endl;
@@ -166,7 +160,7 @@ string GetWord(unsigned int num) {
 }
 
 // hangman ASCII art edited from https://gist.github.com/chrishorton/8510732aa9a80a03c829b09f12e20d9c
-int HangMan(int num) {
+void HangMan(int num) {
     switch (num) {
         case 10:
             cout << "       " << endl;
@@ -268,7 +262,6 @@ int HangMan(int num) {
             cout << "=========" << endl;
             break;
     }
-    return 0;
 }
 
 string DisplayCorrect(string ref, string hidden, char show) {
